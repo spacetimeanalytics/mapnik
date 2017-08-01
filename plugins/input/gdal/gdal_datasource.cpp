@@ -31,6 +31,8 @@
 #include <mapnik/value/types.hpp>
 
 #include <gdal_version.h>
+#include <cpl_vsi.h>
+
 
 using mapnik::datasource;
 using mapnik::parameters;
@@ -51,6 +53,7 @@ extern "C" MAPNIK_EXP void on_plugin_load()
     // initialize gdal formats
     std::call_once(once_flag,[](){
         GDALAllRegister();
+        VSIInstallS3FileHandler();
     });
 }
 

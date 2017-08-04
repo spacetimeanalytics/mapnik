@@ -407,6 +407,7 @@ opts.AddVariables(
     BoolVariable('MAPNIK_RENDER', 'Compile and install a utility to render a map to an image', 'True'),
     BoolVariable('COLOR_PRINT', 'Print build status information in color', 'True'),
     BoolVariable('BIGINT', 'Compile support for 64-bit integers in mapnik::value', 'True'),
+    BoolVariable('ENABLE_GDAL_VSI', 'Enable GDAL Virtual File System (VSI)', 'False'),
     )
 
 # variables to pickle after successful configure step

@@ -31,9 +31,9 @@
 #include <mapnik/value_types.hpp>
 
 #include <gdal_version.h>
-// #ifdef GDAL_VSI
+#ifdef WITH_GDAL_VSI
 #include <cpl_vsi.h>
-// #endif
+#endif
 
 using mapnik::datasource;
 using mapnik::parameters;
@@ -54,22 +54,26 @@ extern "C" MAPNIK_EXP void on_plugin_load()
     // initialize gdal formats
     std::call_once(once_flag,[](){
         GDALAllRegister();
-// #ifdef GDAL_VSI
+#ifdef WITH_GDAL_VSI
+        VSIInstallGZipFileHandler();
+        VSIInstallZipFileHandler();
+        VSIInstallStdinHandler();
+        VSIInstallStdoutHandler();
+        VSIInstallSparseFileHandler();
+        VSIInstallTarFileHandler();
         VSIInstallMemFileHandler();
         VSIInstallSubFileHandler();
         VSIInstallCurlFileHandler();
+#if GDAL_VERSION_NUM >= 2100
         VSIInstallS3FileHandler();
         VSIInstallS3StreamingFileHandler();
+        VSIInstallCryptFileHandler();
+#endif
+#if GDAL_VERSION_NUM >= 2200
         VSIInstallGSFileHandler();
         VSIInstallGSStreamingFileHandler();
-        VSIInstallGZipFileHandler();
-        VSIInstallZipFileHandler();
-        VSIInstallStdinFileHandler();
-        VSIInstallStdoutFileHandler();
-        VSIInstallSparseFileHandler();
-        VSIInstallTarFileHandler();
-        VSIInstallCryptFileHandler();
-// #endif
+#endif
+#endif
     });
 }
 

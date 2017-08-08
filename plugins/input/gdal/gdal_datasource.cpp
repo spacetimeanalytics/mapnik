@@ -31,9 +31,7 @@
 #include <mapnik/value_types.hpp>
 
 #include <gdal_version.h>
-#ifdef WITH_GDAL_VSI
 #include <cpl_vsi.h>
-#endif
 
 using mapnik::datasource;
 using mapnik::parameters;
@@ -54,26 +52,10 @@ extern "C" MAPNIK_EXP void on_plugin_load()
     // initialize gdal formats
     std::call_once(once_flag,[](){
         GDALAllRegister();
-#ifdef WITH_GDAL_VSI
-        VSIInstallGZipFileHandler();
-        VSIInstallZipFileHandler();
-        VSIInstallStdinHandler();
-        VSIInstallStdoutHandler();
-        VSIInstallSparseFileHandler();
-        VSIInstallTarFileHandler();
-        VSIInstallMemFileHandler();
-        VSIInstallSubFileHandler();
-        VSIInstallCurlFileHandler();
-#if GDAL_VERSION_NUM >= 2100
+        std::cout << "installing S3 file handler..." << std::endl;
         VSIInstallS3FileHandler();
         VSIInstallS3StreamingFileHandler();
         VSIInstallCryptFileHandler();
-#endif
-#if GDAL_VERSION_NUM >= 2200
-        VSIInstallGSFileHandler();
-        VSIInstallGSStreamingFileHandler();
-#endif
-#endif
     });
 }
 
@@ -106,6 +88,7 @@ gdal_datasource::gdal_datasource(parameters const& params)
     shared_dataset_ = *params.get<mapnik::boolean_type>("shared", false);
     band_ = *params.get<mapnik::value_integer>("band", -1);
 
+    std::cout << "trying to open file: " << dataset_name_ << std::endl;
 #if GDAL_VERSION_NUM >= 1600
     if (shared_dataset_)
     {
